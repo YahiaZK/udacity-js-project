@@ -7,6 +7,7 @@ const createAboutMe = async () => {
   const aboutMeData = await fetchAboutMe();
 
   const aboutMeDiv = document.querySelector("#aboutMe");
+
   const aboutMeBio = document.createElement("p");
   aboutMeBio.textContent = aboutMeData.aboutMe;
   aboutMeDiv.append(aboutMeBio);
@@ -29,45 +30,67 @@ const fetchProjects = async () => {
 
 const createProjects = async () => {
   const projectsData = await fetchProjects();
-
-  const projectList = document.querySelector("#projectList");
-
   for (const project of projectsData) {
-    const projectCard = document.createElement("div");
-    projectCard.classList.add("projectCard");
-
-    const projectName = document.createElement("h4");
-    projectName.textContent = project.project_name ?? "New Project";
-
-    const shortDescription = document.createElement("p");
-    shortDescription.textContent =
-      project.short_description ?? "!!Description is missing";
-
-    const cardImg = document.createElement("img");
-    cardImg.setAttribute(
-      "src",
-      project.card_image ?? "../images/card_placeholder_bg.webp",
-    );
-
-    cardImg.style.position = "absolute";
-    cardImg.style.top = "0";
-    cardImg.style.left = "0";
-    cardImg.style.width = "100%";
-    cardImg.style.height = "100%";
-    cardImg.style.objectFit = "cover";
-    cardImg.style.zIndex = "0";
-
-    projectName.style.position = "relative";
-    projectName.style.zIndex = "1";
-
-    shortDescription.style.position = "relative";
-    shortDescription.style.zIndex = "1";
-
-    projectCard.append(projectName);
-    projectCard.append(shortDescription);
-    projectCard.append(cardImg);
-    projectList.append(projectCard);
+    createCard(project);
   }
 };
 
+const createCard = (project) => {
+  const projectList = document.querySelector("#projectList");
+  const projectCard = document.createElement("div");
+
+  projectCard.classList.add("projectCard");
+  projectCard.dataset.projectId = project.project_id;
+  projectCard.style.backgroundImage = `url("${project.card_image ?? "../images/card_placeholder_bg.webp"}")`;
+
+  const projectName = document.createElement("h4");
+  projectName.textContent = project.project_name ?? "New Project";
+
+  const shortDescription = document.createElement("p");
+  shortDescription.textContent =
+    project.short_description ?? "!!Description is missing";
+
+  projectCard.append(projectName);
+  projectCard.append(shortDescription);
+
+  projectList.append(projectCard);
+};
+
 createProjects();
+
+const cardListener = () => {
+  const projectList = document.querySelector("#projectList");
+  projectList.addEventListener("pointerdown", handleSpotlight);
+};
+
+const handleSpotlight = async () => {
+  const clickedCard = event.target.closest(".projectCard");
+  const projectId = clickedCard.dataset.projectId;
+  const projectsData = await fetchProjects();
+  const spotlightProject = projectsData.find(
+    (project) => project.project_id === projectId,
+  );
+  createSpotlight(spotlightProject);
+};
+
+const createSpotlight = (spotlightProject) => {
+  const spotlightTitles = document.querySelector("#spotlightTitles");
+  const projectSpotlight = document.querySelector("#projectSpotlight");
+
+  projectSpotlight.style.backgroundImage = `url("${spotlightProject.spotlight_image ?? "../images/spotlight_placeholder_bg.webp"}")`;
+
+  const projectName = document.createElement("h3");
+  projectName.textContent = spotlightProject.project_name ?? "New Project";
+
+  const longDescription = document.createElement("p");
+  longDescription.textContent =
+    spotlightProject.long_description ?? "!!description is missing";
+
+  const projectLink = document.createElement("a");
+  projectLink.textContent = "Click here to see more...";
+  projectLink.setAttribute("href", spotlightProject.url);
+
+  spotlightTitles.replaceChildren(projectName, longDescription, projectLink);
+};
+
+cardListener();
