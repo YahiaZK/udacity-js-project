@@ -101,3 +101,31 @@ const createDefualtSpotlight = async () => {
   createSpotlight(spotlightProject);
 };
 createDefualtSpotlight();
+
+const navArrows = () => {
+  const projectList = document.querySelector("#projectList");
+  const arrowLeft = document.querySelector(".arrow-left");
+  const arrowRight = document.querySelector(".arrow-right");
+
+  const handleArrowLeft = () => {
+    if (isDesktop()) {
+      projectList.scrollBy({ top: -220 });
+    } else {
+      projectList.scrollBy({ left: -220 });
+    }
+  };
+  const handlearrowRight = () => {
+    if (isDesktop()) {
+      projectList.scrollBy({ top: 220 });
+    } else {
+      projectList.scrollBy({ left: 220 });
+    }
+  };
+
+  arrowLeft.addEventListener("pointerdown", handleArrowLeft);
+  arrowRight.addEventListener("pointerdown", handlearrowRight);
+};
+
+navArrows();
+
+const isDesktop = () => window.matchMedia("(min-width: 1024px)").matches;
