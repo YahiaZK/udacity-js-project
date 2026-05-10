@@ -129,3 +129,80 @@ const navArrows = () => {
 navArrows();
 
 const isDesktop = () => window.matchMedia("(min-width: 1024px)").matches;
+
+const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const illegalCharRegex = /[^a-zA-Z0-9@._-]/;
+
+const emailValidation = (emailField) => {
+  const emailError = document.querySelector("#emailError");
+  if (emailField === "") {
+    emailError.textContent = "Email is required.";
+    return false;
+  }
+  if (illegalCharRegex.test(emailField)) {
+    emailError.textContent = "Email contains illegal characters.";
+    return false;
+  }
+  if (!emailRegex.test(emailField)) {
+    emailError.textContent = "Please enter a valid email address.";
+    return false;
+  }
+
+  emailError.textContent = "";
+  return true;
+};
+const textValidation = (textField) => {
+  const messageError = document.querySelector("#messageError");
+
+  if (textField === "") {
+    messageError.textContent = "Message is required.";
+    return false;
+  }
+  if (illegalCharRegex.test(textField)) {
+    messageError.textContent = "Message contains illegal characters.";
+    return false;
+  }
+  if (textField.length > 300) {
+    messageError.textContent = "Message must be 300 characters or fewer.";
+    return false;
+  }
+
+  messageError.textContent = "";
+  return true;
+};
+
+const formValidation = () => {
+  const formSection = document.querySelector("#formSection");
+
+  const handleForm = (event) => {
+    event.preventDefault();
+
+    const emailField = document.querySelector("#contactEmail").value;
+    const textField = document.querySelector("#contactMessage").value;
+
+    const emailValid = emailValidation(emailField);
+    const textValid = textValidation(textField);
+
+    if (emailValid && textValid) {
+      alert("Form submitted successfully!");
+      formSection.reset();
+      // charactersLeft.textContent = "Characters: 0/300";
+    }
+  };
+
+  formSection.addEventListener("submit", handleForm);
+};
+
+formValidation();
+
+const liveCount = () => {
+  const contactMessage = document.querySelector("#contactMessage");
+  const charactersLeft = document.querySelector("#charactersLeft");
+
+  contactMessage.addEventListener("input", () => {
+    const count = contactMessage.value.length;
+    charactersLeft.textContent = `Characters: ${count}/300`;
+  });
+};
+
+liveCount();
