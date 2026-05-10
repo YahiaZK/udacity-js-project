@@ -63,7 +63,7 @@ const cardListener = () => {
   projectList.addEventListener("pointerdown", handleSpotlight);
 };
 
-const handleSpotlight = async () => {
+const handleSpotlight = async (event) => {
   const clickedCard = event.target.closest(".projectCard");
   const projectId = clickedCard.dataset.projectId;
   const projectsData = await fetchProjects();
@@ -94,3 +94,10 @@ const createSpotlight = (spotlightProject) => {
 };
 
 cardListener();
+
+const createDefualtSpotlight = async () => {
+  const projectsData = await fetchProjects();
+  const spotlightProject = projectsData[0];
+  createSpotlight(spotlightProject);
+};
+createDefualtSpotlight();
